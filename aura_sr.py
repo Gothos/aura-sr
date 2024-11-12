@@ -828,7 +828,7 @@ class AuraSR:
     @torch.no_grad()
     def upscale_4x(self, image: Image.Image, max_batch_size=8) -> Image.Image:
         tensor_transform = transforms.ToTensor()
-        device = self.upsampler.device
+        device = "cuda"
 
         image_tensor = tensor_transform(image).unsqueeze(0)
         _, _, h, w = image_tensor.shape
@@ -863,7 +863,7 @@ class AuraSR:
     @torch.no_grad()
     def upscale_4x_overlapped(self, image, max_batch_size=16, weight_type='checkboard'):
         tensor_transform = transforms.ToTensor()
-        device = self.upsampler.device
+        device = "cuda"
 
         image_tensor = tensor_transform(image).unsqueeze(0)
         _, _, h, w = image_tensor.shape
@@ -892,7 +892,6 @@ class AuraSR:
 
             for batch in batches:
                 model_input = torch.stack(batch).to(device)
-                print(model_input.shape)
                 generator_output = self.upsampler(
                     lowres_image=model_input,
                     noise=torch.randn(model_input.shape[0], 128, device=device),
@@ -908,7 +907,6 @@ class AuraSR:
         # First pass
         tiles1, h_chunks1, w_chunks1 = tile_image(image_tensor, self.input_image_size)
         result1 = process_tiles(tiles1, h_chunks1, w_chunks1)
-        print(len(tiles1),"t1")
 
         # Second pass with offset
         offset = self.input_image_size // 2
@@ -917,7 +915,6 @@ class AuraSR:
         tiles2, h_chunks2, w_chunks2 = tile_image(
             image_tensor_offset, self.input_image_size
         )
-        print(len(tiles2),"t2")
         result2 = process_tiles(tiles2, h_chunks2, w_chunks2)
 
 
