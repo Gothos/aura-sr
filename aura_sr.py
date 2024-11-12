@@ -861,7 +861,7 @@ class AuraSR:
     # Tiled 4x upscaling with overlapping tiles to reduce seam artifacts
     # weights options are 'checkboard' and 'constant'
     @torch.no_grad()
-    def upscale_4x_overlapped(self, image, max_batch_size=8, weight_type='checkboard'):
+    def upscale_4x_overlapped(self, image, max_batch_size=16, weight_type='checkboard'):
         tensor_transform = transforms.ToTensor()
         device = self.upsampler.device
 
@@ -908,6 +908,7 @@ class AuraSR:
         # First pass
         tiles1, h_chunks1, w_chunks1 = tile_image(image_tensor, self.input_image_size)
         result1 = process_tiles(tiles1, h_chunks1, w_chunks1)
+        print(len(tiles1),"t1")
 
         # Second pass with offset
         offset = self.input_image_size // 2
@@ -916,7 +917,9 @@ class AuraSR:
         tiles2, h_chunks2, w_chunks2 = tile_image(
             image_tensor_offset, self.input_image_size
         )
+        print(len(tiles2),"t2")
         result2 = process_tiles(tiles2, h_chunks2, w_chunks2)
+
 
         # unpad 
         offset_4x = offset * 4
