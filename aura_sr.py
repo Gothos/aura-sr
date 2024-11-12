@@ -654,7 +654,7 @@ class UnetUpsampler(torch.nn.Module):
             noise = default(
                 noise,
                 torch.randn(
-                    (batch_size, self.style_network.dim_in), device=self.device
+                    (batch_size, self.style_network.dim_in), device="cuda"
                 ),
             )
             styles = self.style_network(noise, global_text_tokens)
