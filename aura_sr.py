@@ -892,6 +892,7 @@ class AuraSR:
 
             for batch in batches:
                 model_input = torch.stack(batch).to(device)
+                print(model_input.shape)
                 generator_output = self.upsampler(
                     lowres_image=model_input,
                     noise=torch.randn(model_input.shape[0], 128, device=device),
