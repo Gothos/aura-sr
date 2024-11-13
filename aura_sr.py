@@ -221,7 +221,7 @@ class Block(nn.Module):
         self.act = nn.SiLU()
 
     def forward(self, x, conv_mods_iter: Optional[Iterable] = None):
-        conv_mods_iter = default(conv_mods_iter, null_iterator())
+        conv_mods_iter = conv_mods_iter, null_iterator()
 
         x = self.proj(x, mod=next(conv_mods_iter), kernel_mod=next(conv_mods_iter))
 
