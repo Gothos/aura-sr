@@ -618,7 +618,7 @@ class UnetUpsampler(torch.nn.Module):
 
     @property
     def device(self):
-        return next(self.parameters()).device
+        return self.style_network.net[0].weight.device
 
     @property
     def total_params(self):
@@ -654,7 +654,7 @@ class UnetUpsampler(torch.nn.Module):
             noise = default(
                 noise,
                 torch.randn(
-                    (batch_size, self.style_network.dim_in), device="cuda"
+                    (batch_size, self.style_network.dim_in), device= self.device
                 ),
             )
             styles = self.style_network(noise, global_text_tokens)
@@ -828,7 +828,7 @@ class AuraSR:
     @torch.no_grad()
     def upscale_4x(self, image: Image.Image, max_batch_size=8) -> Image.Image:
         tensor_transform = transforms.ToTensor()
-        device = "cuda"
+        device = self.upsampler.device
 
         image_tensor = tensor_transform(image).unsqueeze(0)
         _, _, h, w = image_tensor.shape
@@ -863,7 +863,7 @@ class AuraSR:
     @torch.no_grad()
     def upscale_4x_overlapped(self, image, max_batch_size=16, weight_type='checkboard'):
         tensor_transform = transforms.ToTensor()
-        device = "cuda"
+        device = self.upsampler.device
 
         image_tensor = tensor_transform(image).unsqueeze(0)
         _, _, h, w = image_tensor.shape
